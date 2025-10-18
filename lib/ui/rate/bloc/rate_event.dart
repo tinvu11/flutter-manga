@@ -7,6 +7,7 @@ abstract class RateEvent with _$RateEvent {
     required int rating,
     required String slug,
     required double currentRate,
+    required String uid,
   }) = _Submit;
   const factory RateEvent.checkUserRate({
     required String uid,

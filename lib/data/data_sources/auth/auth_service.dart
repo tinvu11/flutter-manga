@@ -32,8 +32,13 @@ class AuthServiceImpl extends AuthService {
 
   // Hàm đăng ký tài khoản
   @override
-  Future<Either<String, String>> signup(RegisterUserRequest createUserRequest) async {
+  Future<Either<String, String>> signup(
+    RegisterUserRequest createUserRequest,
+  ) async {
     try {
+      print(
+        'Attempting to sign up user with email: ${createUserRequest.email} and name: ${createUserRequest.password}',
+      );
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: createUserRequest.email!,
         password: createUserRequest.password,
@@ -72,11 +77,16 @@ class AuthServiceImpl extends AuthService {
   Future<Either<String, String>> editUser(EditUserRequest editInfo) async {
     try {
       final user = _firebaseAuth.currentUser;
-      if (user != null && editInfo.email == user.email && editInfo.password != null) {
+      if (user != null &&
+          editInfo.email == user.email &&
+          editInfo.password != null) {
         await user.updatePassword(editInfo.password!);
       }
       String uid = user!.uid;
-      await _firestore.collection('users').doc(uid).update({'email': editInfo.email, 'fullName': editInfo.name});
+      await _firestore.collection('users').doc(uid).update({
+        'email': editInfo.email,
+        'fullName': editInfo.name,
+      });
 
       return const Right('User information updated successfully');
     } catch (e) {
@@ -93,11 +103,15 @@ class AuthServiceImpl extends AuthService {
         'openid',
       ];
       _googleSignIn.initialize(
-        serverClientId: "333357329063-jtpj97lseomfg7mi05j3h2nnc42tus6j.apps.googleusercontent.com",
+        serverClientId:
+            "333357329063-jtpj97lseomfg7mi05j3h2nnc42tus6j.apps.googleusercontent.com",
       );
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(scopeHint: scopes);
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+        scopeHint: scopes,
+      );
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      final googleAuthorization = await googleUser.authorizationClient.authorizationForScopes(scopes);
+      final googleAuthorization = await googleUser.authorizationClient
+          .authorizationForScopes(scopes);
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuthorization!.accessToken,
@@ -114,19 +128,37 @@ class AuthServiceImpl extends AuthService {
   Future<Either<String, UserEntity>> getUser() async {
     try {
       final user = _firebaseAuth.currentUser;
-      if (user != null) {
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
 
-        if (userDoc.exists && userDoc.data() != null) {
-          UserEntity userEntity = UserEntity.fromJson(userDoc.data() as Map<String, dynamic>);
-          return Right(userEntity);
+      if (user != null) {
+        if (user.email != null && user.displayName != null) {
+          return Right(
+            UserEntity(
+              uid: user.uid,
+              email: user.email ?? '',
+              name: user.displayName ?? '',
+            ),
+          );
         } else {
-          return Left('User document does not exist');
+          // Nếu thiếu thông tin thì lấy từ Firestore
+          final userDoc = await _firestore
+              .collection('users')
+              .doc(user.uid)
+              .get();
+          if (userDoc.exists && userDoc.data() != null) {
+            final userEntity = UserEntity.fromJson(
+              userDoc.data() as Map<String, dynamic>,
+            );
+            return Right(userEntity);
+          } else {
+            print("User document does not exist");
+            return Left('User document does not exist');
+          }
         }
       } else {
-        return Left('No user is currently signed in');
+        return Left('No authenticated user found');
       }
     } catch (e) {
+      print('Error fetching user data: $e');
       return Left('Error fetching user data');
     }
   }

@@ -194,14 +194,10 @@ class _RateAllWidgetState extends State<RateAllWidget>
   }
 
   void _handleFavoriteToggle({required bool isMarked}) {
-    executeWithAuth(() {
-      if (isMarked) {
-        context.read<InfoComicBloc>().add(
-          InfoComicEvent.deleteMark(widget.slug),
-        );
-      } else {
-        context.read<InfoComicBloc>().add(InfoComicEvent.addMark(widget.slug));
-      }
-    });
+    if (isMarked) {
+      context.read<InfoComicBloc>().add(InfoComicEvent.deleteMark(widget.slug));
+    } else {
+      context.read<InfoComicBloc>().add(InfoComicEvent.addMark(widget.slug));
+    }
   }
 }

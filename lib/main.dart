@@ -42,20 +42,6 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeMode.dark,
-          // debugShowCheckedModeBanner: false,
-          // theme: ThemeData.from(
-          //   colorScheme: ColorScheme.fromSeed(
-          //     seedColor: Colors.red,
-          //     brightness: Brightness.light,
-          //   ),
-          // ),
-          // darkTheme: ThemeData.from(
-          //   colorScheme: ColorScheme.fromSeed(
-          //     seedColor: Colors.green,
-          //     brightness: Brightness.dark,
-          //   ),
-          // ),
-          // themeMode: ThemeMode.light,
         );
       },
     );

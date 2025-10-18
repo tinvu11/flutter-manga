@@ -31,7 +31,25 @@ class _TabReadingState extends State<TabReading>
           loading: () => const Center(child: CircularProgressIndicator()),
           loaded: (comics) {
             if (comics.isEmpty) {
-              return const Center(child: Text('Chưa có dữ liệu'));
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<LibReadingBloc>().add(
+                    const LibReadingEvent.loadReadings(),
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: const Center(child: Text('Chưa có truyện nào')),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
             final newList = comics.where((comic) => comic != null).toList();
             return RefreshIndicator(

@@ -42,7 +42,6 @@ class AppRouter {
     routes: [
       GoRoute(
         path: RoutePaths.info,
-
         builder: (context, state) {
           final slug = state.extra as String? ?? '';
           return MultiBlocProvider(
@@ -84,6 +83,7 @@ class AppRouter {
                 create: (context) => ReadBloc(
                   globalRepository: DI().sl<GlobalRepository>(),
                   readingRepository: DI().sl<ReadingRepository>(),
+                  slug: slug,
                 ),
               ),
             ],

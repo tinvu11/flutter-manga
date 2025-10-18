@@ -30,15 +30,13 @@ class RateBloc extends Bloc<RateEvent, RateState> {
   Future<void> _onFetch(_Fetch event, Emitter<RateState> emit) async {
     emit(const RateState.loading());
 
-    // Dùng await for để lắng nghe stream một cách an toàn
     await emit.forEach<Either<String, GetRate>>(
       _firestoreRepository.getRateStream(event.slug),
       onData: (result) {
         return result.fold((failure) => RateState.error(message: failure), (
           rate,
         ) {
-          int currentUserRate = 0;
-
+          print('Fetched rate: ${rate.rate}, count: ${rate.count}');
           return RateState.loaded(
             getRate: GetRate(
               id: rate.id,
@@ -60,17 +58,15 @@ class RateBloc extends Bloc<RateEvent, RateState> {
     try {
       UserRate rateInfo = UserRate(
         currentRate: event.currentRate,
-        slug: event.slug, // Use the slug from the event
-        userId: 'uY05lqfvxuPmxadvh6ACTEOAhY63', // Replace with actual user ID
+        slug: event.slug,
+        userId: event.uid,
         userRate: event.rating,
       );
       final result = await _firestoreRepository.addRate(rateInfo);
-      result.fold((failure) => emit(RateState.error(message: failure)), (
-        success,
-      ) {
-        // emit(RateState.loaded(rating: event.rating.toDouble(), count: 1));
-        // _onFetch();
-      });
+      result.fold(
+        (failure) => emit(RateState.error(message: failure)),
+        (success) {},
+      );
     } catch (e) {
       emit(RateState.error(message: e.toString()));
     }
@@ -80,7 +76,20 @@ class RateBloc extends Bloc<RateEvent, RateState> {
     _CheckUserRate event,
     Emitter<RateState> emit,
   ) async {
-    try {} catch (e) {}
+    try {
+      if (state is _Loaded) {
+        final currentState = state as _Loaded;
+        final result = currentState.getRate.rateBy;
+        final userRate = result[event.uid];
+        if (userRate != null) {
+          // User has rated
+          // You can emit a state or handle accordingly
+        } else {
+          // User has not rated
+          // You can emit a different state or handle accordingly
+        }
+      }
+    } catch (e) {}
   }
 
   @override

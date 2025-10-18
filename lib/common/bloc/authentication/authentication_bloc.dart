@@ -1,5 +1,4 @@
 import 'package:fluter_comic/config/di.dart';
-import 'package:fluter_comic/data/models/auth/user.dart';
 import 'package:fluter_comic/data/models/user_firebase.dart';
 import 'package:fluter_comic/data/repository/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,11 +50,15 @@ class AuthenticationBloc
     Emitter<AuthenticationState> emit,
   ) async {
     try {
-      final user = await DI().sl<AuthRepository>().getUser();
-      user.fold(
-        (failure) => emit(AuthenticationState.unauthenticated()),
-        (userModel) => emit(AuthenticationState.authenticated(userModel)),
-      );
+      final user = await DI().sl<AuthRepository>().isSignedIn();
+      if (user) {
+        final userEntity = await DI().sl<AuthRepository>().getUser();
+        userEntity.fold((failure) {
+          emit(AuthenticationState.unauthenticated());
+        }, (userModel) => emit(AuthenticationState.authenticated(userModel)));
+      } else {
+        emit(const AuthenticationState.unauthenticated());
+      }
     } catch (e) {
       emit(AuthenticationState.unauthenticated());
     }

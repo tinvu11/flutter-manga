@@ -63,7 +63,10 @@ class _ViewAllWidgetState extends State<ViewAllWidget> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            context.push(RoutePaths.info);
+                            context.push(
+                              RoutePaths.info,
+                              extra: comicsList[index].slug,
+                            );
                           },
                           child: SizedBox(
                             height: 180,

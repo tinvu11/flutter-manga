@@ -62,39 +62,26 @@ class FirestoreServiceImpl implements FirestoreService {
   @override
   Stream<Either<String, GetRate>> getRateStream(String slug) {
     try {
-      print('🔍 getRateStream called for slug: $slug');
-
       // Giả sử thông tin rate nằm trong document của chính article đó
       return _firestore
           .collection('books')
           .doc(slug)
           .snapshots() // Lắng nghe thay đổi của một document duy nhất
           .map((documentSnapshot) {
-            print('📄 Document snapshot received for slug: $slug');
-            print('📄 Document exists: ${documentSnapshot.exists}');
-
             if (documentSnapshot.exists) {
               final data = documentSnapshot.data();
-              print('📄 Document data: $data');
 
               if (data != null) {
-                print('📄 Creating GetRate from data...');
-
                 // Nếu document tồn tại, tạo đối tượng GetRate
                 final rateData = GetRate.fromSnapshot(documentSnapshot);
-                print(
-                  '✅ Successfully created GetRate: rate=${rateData.rate}, count=${rateData.count}',
-                );
 
                 return Right<String, GetRate>(rateData);
               } else {
-                print('🔴 Document exists but data is null');
                 return Left<String, GetRate>(
                   'Document tồn tại nhưng không có dữ liệu.',
                 );
               }
             } else {
-              print('🔴 Document does not exist for slug: $slug');
               // Nếu document không tồn tại, trả về default values thay vì lỗi
               final defaultRate = GetRate(
                 id: slug,
@@ -106,7 +93,6 @@ class FirestoreServiceImpl implements FirestoreService {
             }
           });
     } catch (e) {
-      print('🔴 Exception in getRateStream: $e');
       return Stream.value(Left('Lỗi không xác định: ${e.toString()}'));
     }
   }

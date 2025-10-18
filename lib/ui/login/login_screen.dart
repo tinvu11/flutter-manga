@@ -18,7 +18,10 @@ class LoginScreen extends StatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => BlocProvider(create: (context) => LoginBloc(), child: const LoginScreen()),
+      builder: (context) => BlocProvider(
+        create: (context) => LoginBloc(),
+        child: const LoginScreen(),
+      ),
     );
   }
 }
@@ -63,11 +66,18 @@ class _LoginScreenState extends State<LoginScreen> {
           orElse: () => null,
           failure: (message) {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message.toString())));
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(message.toString())));
           },
           success: () {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng nhập thành công!')));
+            context.read<AuthenticationBloc>().add(
+              const AuthenticationEvent.signedIn(),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Đăng nhập thành công!')),
+            );
           },
         );
       },
@@ -95,18 +105,36 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Text('Đăng nhập', style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                        child: Text(
+                          'Đăng nhập',
+                          style: textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Nếu bạn chưa có tài khoản, ', style: textTheme.titleSmall),
-                          Text('hãy đăng ký ngay!', style: textTheme.titleSmall?.copyWith(color: Colors.blue)),
+                          Text(
+                            'Nếu bạn chưa có tài khoản, ',
+                            style: textTheme.titleSmall,
+                          ),
+                          Text(
+                            'hãy đăng ký ngay!',
+                            style: textTheme.titleSmall?.copyWith(
+                              color: Colors.blue,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),
-                      _buildTextFormField(context, 'Email', _email, TextInputType.emailAddress),
+                      _buildTextFormField(
+                        context,
+                        'Email',
+                        _email,
+                        TextInputType.emailAddress,
+                      ),
                       _buildTextFormField(
                         context,
                         'Mật khẩu',
@@ -122,7 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             context.read<LoginBloc>().add(
-                              LoginEvent.loginSubmitted(email: _email.text, password: _password.text),
+                              LoginEvent.loginSubmitted(
+                                email: _email.text,
+                                password: _password.text,
+                              ),
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -130,7 +161,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             foregroundColor: colorScheme.onPrimary,
                             elevation: 2,
                             shadowColor: Colors.orange.withOpacity(0.3),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: Text(
                             'Đăng nhập',
@@ -159,12 +192,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Divider với text
                       Row(
                         children: [
-                          Expanded(child: Divider(thickness: 2, color: colorScheme.secondary)),
+                          Expanded(
+                            child: Divider(
+                              thickness: 2,
+                              color: colorScheme.secondary,
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text('hoặc', style: textTheme.bodySmall?.copyWith(color: colorScheme.onSecondary)),
+                            child: Text(
+                              'hoặc',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSecondary,
+                              ),
+                            ),
                           ),
-                          Expanded(child: Divider(thickness: 2, color: colorScheme.secondary)),
+                          Expanded(
+                            child: Divider(
+                              thickness: 2,
+                              color: colorScheme.secondary,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -174,12 +222,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 48,
                         child: OutlinedButton(
                           onPressed: () {
-                            context.read<LoginBloc>().add(const LoginEvent.loginWithGooglePressed());
+                            context.read<LoginBloc>().add(
+                              const LoginEvent.loginWithGooglePressed(),
+                            );
                           },
 
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: colorScheme.secondary, width: 2.5),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            side: BorderSide(
+                              color: colorScheme.secondary,
+                              width: 2.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -191,14 +246,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                 placeholderBuilder: (context) => Container(
                                   width: 24,
                                   height: 24,
-                                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                                  child: Icon(Icons.g_mobiledata, color: Colors.deepPurple, size: 20),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.g_mobiledata,
+                                    color: Colors.deepPurple,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 'Đăng nhập với Google',
-                                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
@@ -243,21 +307,32 @@ class _LoginScreenState extends State<LoginScreen> {
         style: const TextStyle(fontSize: 16),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14, fontWeight: FontWeight.w500),
+          labelStyle: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
 
           error: state.maybeMap(
             orElse: () => null,
             initial: (value) {
               if (keyboardType == TextInputType.emailAddress) {
-                return value.isEmailValid ? null : const Text('Email không hợp lệ');
+                return value.isEmailValid
+                    ? null
+                    : const Text('Email không hợp lệ');
               } else {
-                return value.isPasswordValid ? null : const Text('Mật khẩu không hợp lệ');
+                return value.isPasswordValid
+                    ? null
+                    : const Text('Mật khẩu không hợp lệ');
               }
             },
           ),
           filled: true,
           fillColor: colorScheme.surface,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
 
           suffixIcon: obscureText
               ? Icon(Icons.visibility_off_outlined, color: Colors.grey[600])

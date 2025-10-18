@@ -216,6 +216,8 @@ class _InfoScreenState extends State<InfoScreen> {
                                     .toString()
                                     .replaceAll('<p>', '')
                                     .replaceAll('</p>', ''),
+                                maxLines: 5,
+                                overflow: TextOverflow.ellipsis,
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium?.copyWith(),
@@ -241,7 +243,14 @@ class _InfoScreenState extends State<InfoScreen> {
                         delegate: _TabBarDelegate(
                           TabBar(
                             tabs: [
-                              Tab(text: ('Chương')),
+                              Tab(
+                                child: Text(
+                                  'Chương',
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              ),
                               // Tab(text: ('Comments')),
                             ],
                             tabAlignment: TabAlignment.start,
@@ -370,6 +379,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           top: BorderSide(
             color: Theme.of(context).colorScheme.secondary,

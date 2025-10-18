@@ -99,19 +99,21 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
               orElse: () => (uid: null, userName: null),
             );
 
-            // Update rate status based on current user and state
             state.maybeWhen(
               loaded: (getRate) {
                 isRate =
                     currentUser.uid != null &&
                     getRate.rateBy.containsKey(currentUser.uid);
-                if (isRate && currentUser.uid != null) {
+                if (isRate) {
+                  print('User has rated');
                   selectedIndex = items.indexWhere(
                     (item) => item['point'] == getRate.rateBy[currentUser.uid],
                   );
                 }
               },
-              orElse: () {},
+              orElse: () {
+                isRate = false;
+              },
             );
 
             return Container(
@@ -154,7 +156,9 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 18),
-                    _buildListRate(),
+                    _buildListRate(
+                      currentUser.uid != null ? currentUser.uid! : "",
+                    ),
                   ],
                 ),
               ),
@@ -179,7 +183,7 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
     );
   }
 
-  Widget _buildListRate() {
+  Widget _buildListRate(String uid) {
     return Column(
       children: [
         SingleChildScrollView(
@@ -213,7 +217,7 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
               flex: 1,
-              ontap: () => _handleSubmitRating(),
+              ontap: () => _handleSubmitRating(uid),
             ),
             const SizedBox(width: 10),
             ButtonWidget(
@@ -231,7 +235,7 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
     );
   }
 
-  void _handleSubmitRating() {
+  void _handleSubmitRating(String uid) {
     if (isRate) {
       showDialog(
         context: context,
@@ -254,10 +258,10 @@ class _RateScreenState extends State<RateScreen> with AuthenticationMixin {
       return;
     }
 
-    // Submit rating
     executeWithAuth(() {
       context.read<RateBloc>().add(
         RateEvent.submit(
+          uid: uid,
           currentRate: currentRate,
           slug: widget.slug,
           rating: items[selectedIndex!]['point'] as int,

@@ -12,9 +12,11 @@ part 'read_state.dart';
 class ReadBloc extends Bloc<ReadEvent, ReadState> {
   final GlobalRepository _globalRepository;
   final ReadingRepository _readingRepository;
+  final String slug;
   ReadBloc({
     required GlobalRepository globalRepository,
     required ReadingRepository readingRepository,
+    required this.slug,
   }) : _globalRepository = globalRepository,
        _readingRepository = readingRepository,
        super(const ReadState.initial()) {
@@ -38,5 +40,14 @@ class ReadBloc extends Bloc<ReadEvent, ReadState> {
         },
       );
     });
+  }
+  @override
+  Future<void> close() async {
+    print('ReadBloc is being closed. Saving reading state for slug: $slug');
+    final readings = await _readingRepository.getReading();
+    if (!readings.contains(this.slug)) {
+      await _readingRepository.saveReading(this.slug);
+    }
+    return super.close();
   }
 }

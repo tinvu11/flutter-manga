@@ -31,57 +31,78 @@ class _TabMarkedState extends State<TabMarked>
     return BlocBuilder<MarkedBloc, MarkedState>(
       builder: (context, state) {
         return state.when(
-          initial: () => const Center(child: Text('Chưa có dữ liệu')),
+          initial: () => const Center(child: CircularProgressIndicator()),
           loading: () => const Center(child: CircularProgressIndicator()),
           loaded: (comics) {
             if (comics.isEmpty) {
-              return const Center(child: Text('Chưa có dữ liệu'));
-            }
-            final newList = comics.where((comic) => comic != null).toList();
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<MarkedBloc>().add(const MarkedEvent.loadComics());
-              },
-              child: GridView.builder(
-                itemCount: newList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 0.61,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                ),
-                itemBuilder: (context, index) {
-                  final comic = newList[index]!.data.item;
-                  return Column(
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<MarkedBloc>().add(
+                    const MarkedEvent.loadComics(),
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          context.push(RoutePaths.info, extra: comic.slug);
-                        },
-                        child: SizedBox(
-                          height: 180,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  'https://img.otruyenapi.com/uploads/comics/${comic.thumbUrl}',
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: const Center(child: Text('Chưa có truyện nào')),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              final newList = comics.where((comic) => comic != null).toList();
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<MarkedBloc>().add(
+                    const MarkedEvent.loadComics(),
+                  );
+                },
+                child: GridView.builder(
+                  itemCount: newList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 0.61,
+                    crossAxisSpacing: 16.0,
+                    mainAxisSpacing: 16.0,
+                  ),
+                  itemBuilder: (context, index) {
+                    final comic = newList[index]!.data.item;
+                    return Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            context.push(RoutePaths.info, extra: comic.slug);
+                          },
+                          child: SizedBox(
+                            height: 180,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    'https://img.otruyenapi.com/uploads/comics/${comic.thumbUrl}',
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Text(
-                        comic.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          comic.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
+                      ],
+                    );
+                  },
+                ),
+              );
+            }
           },
           error: (error) => Center(child: Text(error.toString())),
         );

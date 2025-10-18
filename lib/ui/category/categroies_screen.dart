@@ -18,7 +18,9 @@ class _State extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<CategoryBloc>().add(CategoryEvent.loadComics(name: widget.slug, page: 1));
+    context.read<CategoryBloc>().add(
+      CategoryEvent.loadComics(name: widget.slug, page: 1),
+    );
   }
 
   @override
@@ -66,7 +68,8 @@ class _State extends State<CategoriesScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: CachedNetworkImage(
-                            imageUrl: 'https://img.otruyenapi.com/uploads/comics/${data[index].thumbUrl}',
+                            imageUrl:
+                                'https://img.otruyenapi.com/uploads/comics/${data[index].thumbUrl}',
                             // 'https://img.otruyenapi.com/uploads/comics/kougekiryoku-zero-kara-hajimeru-kenseitan-thumb.jpg',
                             fit: BoxFit.cover,
                           ),
@@ -81,7 +84,10 @@ class _State extends State<CategoriesScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         data[index].name,
-                        style: textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
