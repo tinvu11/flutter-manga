@@ -1,4 +1,4 @@
-# 📚 Flutter Comic App - Built with Flutter, Clean Template, BLoC, REST API, Firebase Auth, and Unit-Tests.
+# 📚 Flutter Comic App - Built with Flutter, BLoC, REST API, Firebase Auth.
 
 
 ## 📱 Working application
