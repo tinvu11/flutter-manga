@@ -20,7 +20,6 @@ import 'package:fluter_comic/ui/libary/bloc_marked/marked_bloc.dart';
 import 'package:fluter_comic/ui/libary/bloc_reading/lib_reading_bloc.dart';
 import 'package:fluter_comic/ui/login/bloc/login_bloc.dart';
 import 'package:fluter_comic/ui/rate/bloc/rate_bloc.dart';
-import 'package:fluter_comic/ui/read/bloc/read_bloc.dart';
 import 'package:fluter_comic/ui/search/bloc/search_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -41,40 +40,76 @@ class DI {
   Future<void> init() async {
     // Blocs
     sl.registerLazySingleton<LoginBloc>(() => LoginBloc());
-    sl.registerLazySingleton<InfoComicBloc>(() => InfoComicBloc(globalRepository: sl(), markRepository: sl()));
+    sl.registerLazySingleton<InfoComicBloc>(
+      () => InfoComicBloc(globalRepository: sl(), markRepository: sl()),
+    );
     sl.registerLazySingleton<HomeBloc>(() => HomeBloc(globalRepository: sl()));
-    sl.registerLazySingleton<AuthenticationBloc>(() => AuthenticationBloc()..add(AuthenticationEvent.appStarted()));
-    sl.registerLazySingleton<SearchBloc>(() => SearchBloc(globalRepository: sl()));
-    sl.registerLazySingleton<CommentBloc>(() => CommentBloc(firestoreRepository: sl()));
-    sl.registerLazySingleton<RateBloc>(() => RateBloc(firestoreRepository: sl()));
-    sl.registerLazySingleton<MarkedBloc>(() => MarkedBloc(markRepository: sl(), globalRepository: sl()));
-    sl.registerLazySingleton<LibReadingBloc>(() => LibReadingBloc(readingRepository: sl(), globalRepository: sl()));
+    sl.registerLazySingleton<AuthenticationBloc>(
+      () => AuthenticationBloc()..add(AuthenticationEvent.appStarted()),
+    );
+    sl.registerLazySingleton<SearchBloc>(
+      () => SearchBloc(globalRepository: sl()),
+    );
+    sl.registerLazySingleton<CommentBloc>(
+      () => CommentBloc(firestoreRepository: sl()),
+    );
+    sl.registerLazySingleton<RateBloc>(
+      () => RateBloc(firestoreRepository: sl()),
+    );
+    sl.registerLazySingleton<MarkedBloc>(
+      () => MarkedBloc(markRepository: sl(), globalRepository: sl()),
+    );
+    sl.registerLazySingleton<LibReadingBloc>(
+      () => LibReadingBloc(readingRepository: sl(), globalRepository: sl()),
+    );
 
     // Dio
-    sl.registerLazySingleton<Dio>(() => ComicDio(connectivity: Connectivity()).dio);
+    sl.registerLazySingleton<Dio>(
+      () => ComicDio(connectivity: Connectivity()).dio,
+    );
 
-    sl.registerLazySingleton<PairStorage>(() => SharedPreferencesMarkStorage(prefs: sl()));
+    sl.registerLazySingleton<PairStorage>(
+      () => SharedPreferencesMarkStorage(prefs: sl()),
+    );
     final prefs = await SharedPreferences.getInstance();
     sl.registerLazySingleton<SharedPreferences>(() => prefs);
 
-    sl.registerLazySingleton<MarkRepository>(() => MarkRepositoryImpl(pairStorage: sl()));
-    sl.registerLazySingleton<ReadingRepository>(() => ReadingRepositoryImpl(pairStorage: sl()));
+    sl.registerLazySingleton<MarkRepository>(
+      () => MarkRepositoryImpl(pairStorage: sl()),
+    );
+    sl.registerLazySingleton<ReadingRepository>(
+      () => ReadingRepositoryImpl(pairStorage: sl()),
+    );
 
     // Services
     sl.registerLazySingleton<ComicService>(() => ComicServiceImpl(dio: sl()));
-    sl.registerLazySingleton<GlobalRepository>(() => GlobalRepositoryImpl(comicData: sl()));
+    sl.registerLazySingleton<GlobalRepository>(
+      () => GlobalRepositoryImpl(comicData: sl()),
+    );
 
     // Authentication related services
     sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-    sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+    sl.registerLazySingleton<FirebaseFirestore>(
+      () => FirebaseFirestore.instance,
+    );
     sl.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn.instance);
     sl.registerLazySingleton<AuthService>(
-      () => AuthServiceImpl(firebaseAuth: sl(), firestore: sl(), googleSignIn: sl()),
+      () => AuthServiceImpl(
+        firebaseAuth: sl(),
+        firestore: sl(),
+        googleSignIn: sl(),
+      ),
     );
-    sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(authService: sl()));
+    sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(authService: sl()),
+    );
 
-    sl.registerLazySingleton<FirestoreService>(() => FirestoreServiceImpl(firestore: sl()));
+    sl.registerLazySingleton<FirestoreService>(
+      () => FirestoreServiceImpl(firestore: sl()),
+    );
 
-    sl.registerLazySingleton<FirestoreRepository>(() => FirestoreRepositoryImpl(firestoreService: sl()));
+    sl.registerLazySingleton<FirestoreRepository>(
+      () => FirestoreRepositoryImpl(firestoreService: sl()),
+    );
   }
 }

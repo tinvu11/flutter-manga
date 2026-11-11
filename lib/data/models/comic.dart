@@ -10,14 +10,13 @@ abstract class Comic with _$Comic {
     required String status,
     required String message,
   }) = _Comic;
-
   factory Comic.fromJson(Map<String, dynamic> json) => _$ComicFromJson(json);
 }
 
+// Các lớp phụ trợ dưới sẽ được gọi tự động bởi freezed
 @freezed
 abstract class Data with _$Data {
   const factory Data({required List<ItemsComic> items}) = _Data;
-
   factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 }
 

@@ -37,7 +37,6 @@ class _StatesWidgetState extends State<StatesWidget> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return BlocListener<HomeBloc, HomeState>(
       listener: (context, state) {
         state.whenOrNull(

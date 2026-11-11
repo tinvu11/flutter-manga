@@ -52,7 +52,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               },
               (r) {
                 print('Fetched comics for category: $r.data.ItemByStates');
-
                 return MapEntry(category, r.data.items);
               },
             );

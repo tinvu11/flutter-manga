@@ -47,7 +47,6 @@ class CategoriesWidgetWidget extends StatelessWidget {
           style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 16),
-
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
